@@ -1,6 +1,6 @@
 <h1> game start </h1>
 <script>
-  let play_time=5
+  let play_time=60
 </script>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,9 +17,11 @@
   </style>
 
   <script>
-    let play_time = 5; // Countdown time in seconds
     // Function to start countdown
     function startCountdown() {
+
+      alert("asdf");
+
       const timerElement = document.getElementById("timer");
       const countdownInterval = setInterval(function() {
         timerElement.textContent = play_time + " seconds remaining";

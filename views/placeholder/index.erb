@@ -1,0 +1,32 @@
+<h2>Ledare</h2>
+
+<ul>
+<% @leaders.each do |leader| %>
+    <li>
+    <p "/placeholder/<%= leader['id'] %>">
+        <%= leader['name'] %>
+    </p>
+        <ul>
+            <li>
+                <%= leader['name'] %>
+            </li>
+            <li>
+                <%= leader['country'] %>
+            </li>
+            <li>
+                <%= leader['continent'] %>
+            </li>
+            <li>
+                <img src="<%= leader['img'] %>">
+            </li>
+            <form action='/placeholder/<%= leader['id'] %>/delete' method='post'>
+                <button type="submit">DELETE</button>
+            </form> 
+            <form action='/placeholder/<%= leader['id'] %>/edit' method='get'>
+                <button type="submit">EDIT</button>
+            </form> 
+        </ul>
+    </li>
+<% end %>
+</ul>
+

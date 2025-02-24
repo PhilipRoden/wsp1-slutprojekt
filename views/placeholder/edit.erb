@@ -1,0 +1,7 @@
+<form action='/placeholder/<%=@leader['id']%>/update' method='post'> 
+  Name <input type='text' name='leader_name' value='<%= @leader['name']%>'></input>
+  Country <input type='text' name='leader_country' value='<%= @leader['country']%>'></input> 
+  Continent <input type='text' name='leader_continent' value='<%= @leader['continent']%>'></input>
+  Image <input type='text' name='leader_cimg' value='<%= @leader['img']%>'></input>
+  <button type='submit'>Send</button>
+</form>

@@ -1,7 +1,15 @@
 <h1> game start </h1>
 <script>
-  let play_time=60
+  let play_time = localStorage.getItem("Time");
+
+  alert(play_time);
+  if (play_time == null){
+    play_time= 60;
+  }
+ 
+
 </script>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +28,8 @@
     // Function to start countdown
     function startCountdown() {
 
-      alert("asdf");
+      alert(play_time);
+
 
       const timerElement = document.getElementById("timer");
       const countdownInterval = setInterval(function() {
@@ -30,6 +39,8 @@
         if (play_time < 0) {
           clearInterval(countdownInterval);
           window.location.href = "/placeholder/result"; // Redirect when time is up
+          localStorage.setItem("Time", 60);
+
         }
       }, 1000); // Update every 1 second
     }
@@ -67,7 +78,7 @@
             </li>
             <li>
               <h1>Page Refresh Example</h1>
-              <button onclick="refreshPage()">Refresh Page</button>
+              <button onclick="refreshPage(play_time)">Refresh Page</button>
             </li>
 
         </ul>
@@ -76,9 +87,11 @@
 </ul>
 
     <script>
-        function refreshPage() {
-          let play_time=60-play_time
+        function refreshPage(input) {
+          let temp_time=input
+          time_store(temp_time);
           location.reload();
+          
         }
     </script>
     <script>
@@ -89,6 +102,7 @@
         function right() {
             localStorage.setItem("tempData", [x+=1,y]);
             alert("Data Stored in Local Storage!");
+    
         }
          function wrong() {
             localStorage.setItem("tempData", [x,y+=1]);
@@ -97,6 +111,11 @@
         function retrieveData() {
             let data = localStorage.getItem("tempData");
             alert("Retrieved Data: " + data);
+        }
+
+        function time_store(input) {
+            localStorage.setItem("Time", input);
+            alert("Data Stored in Local Storage!");
         }
     </script>
 </body>

@@ -21,7 +21,7 @@ class App < Sinatra::Base
     end
 
     get '/placeholder/game' do
-        @leaders = db.execute('SELECT * FROM leaders')
+        @leaders = db.execute('SELECT * FROM leaders ORDER BY RANDOM()')
         erb(:"placeholder/game")
     end
 
@@ -40,6 +40,7 @@ class App < Sinatra::Base
     end
 
     get '/placeholder/result' do 
+        @leaders = db.execute('SELECT * FROM leaders ORDER BY RANDOM()')
         erb(:"/placeholder/result")
     end
     
@@ -51,12 +52,7 @@ class App < Sinatra::Base
         redirect "/placeholder"
     end
 
-    post '/placeholder/:id/status_update' do |id| 
-        current_status = db.execute('SELECT status FROM leaders WHERE id = ?', [id]).first['status'] 
-        new_status = current_status == 0 ? 1 : 0
-        db.execute('UPDATE leaders SET status = ? WHERE id = ?', [new_status, id])
-        redirect "/placeholder"
-    end
+
 
     post '/placeholder/:id/delete' do |id|
         db.execute('DELETE FROM leaders WHERE id = ?', id)
@@ -118,5 +114,6 @@ class App < Sinatra::Base
 
         p current_user
         p cleartext_password
+
     end
 end

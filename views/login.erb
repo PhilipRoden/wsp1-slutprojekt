@@ -1,4 +1,10 @@
-<%=@error_message%>
+<% if session[:error_message] %>
+  <script type="text/javascript">
+    alert("<%= session[:error_message] %>");
+  </script>
+  <% session[:error_message] = nil %> <!-- Rensa felmeddelandet efter att det visats -->
+<% end %>
+
 <form action="/login" method="post">
    <label>User<input type="text" name="user"></label>
    <label>Password <input type="password" name="password"></label>

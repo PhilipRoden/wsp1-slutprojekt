@@ -1,5 +1,3 @@
-<h1> game start </h1>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +11,6 @@
       font-weight: bold;
     }
   </style>
-
   <script>
     // Function to start countdown
     function startCountdown() {
@@ -37,34 +34,21 @@
 <h1>Game Start</h1>
   <div id="timer"></div> <!-- Timer display -->
 <ul>
-<% @leaders.each do |leader| %>
-
-    <li>
-        <%= leader['name'] %>
-    </p>
-        <ul>
-            <li>
-                <%= leader['name'] %>
-            </li>
-            <li>
-                <%= leader['country'] %>
-            </li>
-            <li>
-                <%= leader['continent'] %>
-            </li>
-            <li>
-                <img src="<%= leader['img'] %>">
-            </li>
-            <li>
-              <form action="/check_name" method="post">
-                <label>Name <input type="text" name="leader_name"></label>
-                <input type="submit" value="Spara">
-              </form>
-            </li>
-
-        </ul>
-    </li>
-<% end %>
+  <li>
+    <%= @current_leader['name'] %>
+    <ul>
+      <li><%= @current_leader['name'] %></li>
+      <li><%= @current_leader['country'] %></li>
+      <li><%= @current_leader['continent'] %></li>
+      <li><img src="<%= @current_leader['img'] %>"></li>
+      <li>
+        <form action="/check_name" method="post">
+          <label>Name <input type="text" name="leader_name"></label>
+          <input type="submit" value="Spara">
+        </form>
+      </li>
+    </ul>
+  </li>
 </ul>
 
 </body>

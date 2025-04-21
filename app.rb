@@ -14,33 +14,41 @@ class App < Sinatra::Base
 
     get '/placeholder' do
         session[:time] = 60
-        session[:question_index] = 1
+        session[:random_key] = SecureRandom.hex(16)
+        session[:question_index] = 0
         session[:score] = 0
-        session[:leaders] = db.execute('SELECT * FROM leaders ORDER BY RANDOM()')
         @leaders = db.execute('SELECT * FROM leaders')
         erb(:"placeholder/index")
     end
 
     get '/placeholder/new' do
         session[:time] = 60
-        session[:question_index] = 1
-        session[:leaders] = db.execute('SELECT * FROM leaders ORDER BY RANDOM()')
+        session[:question_index] = 0
         session[:score] = 0
+        session[:random_key] = SecureRandom.hex(16)
         erb(:"placeholder/new")
     end
 
     get '/placeholder/game' do
         @TIME = session[:time]
+        
         if session[:user_id]
+            # Hämta nyckeln från sessionen
+            random_key = session[:random_key]
+            srand(random_key.hash)
+            # Hämta alla ledare från databasen
+            leaders = db.execute('SELECT * FROM leaders')
+            # Slumpa ordningen på ledarna
+            shuffled_leaders = leaders.shuffle
             index = session[:question_index]
-            leaders = session[:leaders]
+            leaders = shuffled_leaders
             @current_leader = leaders[index]
-            # If we've run out of questions
             if @current_leader.nil?
                 redirect '/placeholder/result'
             end
             erb(:"placeholder/game")
         else
+            session[:error_message] = "Please log in to play the game."
             redirect '/login'
         end
     end
@@ -48,8 +56,8 @@ class App < Sinatra::Base
 
     post '/placeholder' do
         session[:time] = 60
-        session[:question_index] = 1
-        session[:leaders] = db.execute('SELECT * FROM leaders ORDER BY RANDOM()')
+        session[:random_key] = SecureRandom.hex(16)
+        session[:question_index] = 0
         session[:score] = 0
         p params
         name = params["leader_name"]
@@ -62,8 +70,8 @@ class App < Sinatra::Base
 
     get '/new_user' do
         session[:time] = 60
-        session[:question_index] = 1
-        session[:leaders] = db.execute('SELECT * FROM leaders ORDER BY RANDOM()')
+        session[:random_key] = SecureRandom.hex(16)
+        session[:question_index] = 0
         session[:score] = 0
         erb(:"/new_user")
     end
@@ -85,24 +93,22 @@ class App < Sinatra::Base
         end
         session[:score] = 0
         session[:time] = 60
-        session[:question_index] = 1
-        session[:leaders] = db.execute('SELECT * FROM leaders ORDER BY RANDOM()')
+        session[:random_key] = SecureRandom.hex(16)
+        session[:question_index] = 0
         erb(:"/placeholder/result")
     end
     
     post '/new_user' do
         session[:score] = 0
+        session[:random_key] = SecureRandom.hex(16)
         session[:time] = 60
-        session[:question_index] = 1
-        session[:leaders] = db.execute('SELECT * FROM leaders ORDER BY RANDOM()')
+        session[:question_index] = 0
         p params
         password_hashed = BCrypt::Password.create(params["password"])
         user = params["user"]
         db.execute("INSERT INTO users (user, password) VALUES(?,?)", [user, password_hashed])
         redirect "/placeholder"
     end
-
-
 
     post '/placeholder/:id/delete' do |id|
         db.execute('DELETE FROM leaders WHERE id = ?', id)
@@ -125,7 +131,7 @@ class App < Sinatra::Base
         country = params["leader_country"]
         continent = params["leader_continent"]
         img = params["leader_img"]
-        db.execute('UPDATE leaders SET name = ?, country = ?, continent = ?, img WHERE id = ?', [name, country, continent, img, id])
+        db.execute('UPDATE leaders SET name = ?, country = ?, continent = ?, img = ? WHERE id = ?', [name, country, continent, img, id])
         redirect "/placeholder"
     end
 
@@ -135,7 +141,7 @@ class App < Sinatra::Base
     
         # Query the database to check if the name exists
         leader = db.execute("SELECT * FROM leaders WHERE name = ?", name).first
-  
+        session[:question_index] += 1
         if leader.nil?
             # If name is not found, redirect to a failure or error page
             @error_message = "Leader not found!"
@@ -148,23 +154,22 @@ class App < Sinatra::Base
             session[:score] += 1
             redirect "/placeholder/game"  # Redirect to the game with the leader found
         end
-        session[:question_index] += 1
     end
   
 
     get '/login' do
         session[:time] = 60
+        session[:random_key] = SecureRandom.hex(16)
         session[:score] = 0
-        session[:question_index] = 1
-        session[:leaders] = db.execute('SELECT * FROM leaders ORDER BY RANDOM()')
+        session[:question_index] = 0
         erb :"/login"
     end
 
     post '/login' do
         session[:time] = 60
+        session[:random_key] = SecureRandom.hex(16)
         session[:score] = 0
-        session[:question_index] = 1
-        session[:leaders] = db.execute('SELECT * FROM leaders ORDER BY RANDOM()')
+        session[:question_index] = 0
         username = params['user']
         cleartext_password = params['password'] 
         current_user = db.execute('SELECT * FROM users WHERE user = ?', username).first
@@ -197,9 +202,9 @@ class App < Sinatra::Base
 
     get '/leaderboard' do
         session[:time] = 60
-        session[:question_index] = 1
+        session[:random_key] = SecureRandom.hex(16)
+        session[:question_index] = 0
         session[:score] = 0
-        session[:leaders] = db.execute('SELECT * FROM leaders ORDER BY RANDOM()')
         @users = db.execute('SELECT * FROM users ORDER BY score DESC')
         erb (:"placeholder/leaderboard")
     end

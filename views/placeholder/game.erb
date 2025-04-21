@@ -17,10 +17,7 @@
   <script>
     // Function to start countdown
     function startCountdown() {
-
       let play_time = <%= @TIME%>; // Set the countdown time in seconds
-
-
       const timerElement = document.getElementById("timer");
       const countdownInterval = setInterval(function() {
         timerElement.textContent = play_time + " seconds remaining";

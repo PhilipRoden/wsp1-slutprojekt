@@ -12,27 +12,32 @@
     }
   </style>
   <script>
-    // Function to start countdown
-    function startCountdown() {
-      let play_time = <%= @TIME%>; // Set the countdown time in seconds
-      const timerElement = document.getElementById("timer");
-      const countdownInterval = setInterval(function() {
-        timerElement.textContent = play_time + " seconds remaining";
-        play_time--;
+  function startCountdown() {
+    let play_time = <%= @TIME %>;
+    const timerElement = document.getElementById("timer");
+    const timeInput = document.getElementById("play_time_input");
+    const form = document.getElementById("nameForm");
 
-        if (play_time < 0) {
-          clearInterval(countdownInterval);
-          window.location.href = "/placeholder/result"; // Redirect when time is up
-        }
-      }, 1000); // Update every 1 second
-    }
-    window.onload = startCountdown; // Start countdown when page loads
-  </script>
+    const countdownInterval = setInterval(function () {
+      timerElement.textContent = play_time + " seconds remaining";
+      timeInput.value = play_time;
+      play_time--;
+
+      if (play_time < 0) {
+        clearInterval(countdownInterval);
+        window.location.href = "/placeholder/result";
+      }
+    }, 1000);
+  }
+
+  window.onload = startCountdown;
+</script>
+
 
 </head>
 <body>
 <h1>Game Start</h1>
-  <div id="timer"></div> <!-- Timer display -->
+  <div id="timer"></div>
 <ul>
   <li>
     <%= @current_leader['name'] %>
@@ -42,10 +47,12 @@
       <li><%= @current_leader['continent'] %></li>
       <li><img src="<%= @current_leader['img'] %>"></li>
       <li>
-        <form action="/check_name" method="post">
+        <form id="nameForm" action="/check_name" method="post">
           <label>Name <input type="text" name="leader_name"></label>
+          <input type="hidden" name="play_time" id="play_time_input">
           <input type="submit" value="Spara">
         </form>
+
       </li>
     </ul>
   </li>

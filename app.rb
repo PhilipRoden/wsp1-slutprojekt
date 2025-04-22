@@ -33,12 +33,9 @@ class App < Sinatra::Base
         @TIME = session[:time]
         
         if session[:user_id]
-            # Hämta nyckeln från sessionen
             random_key = session[:random_key]
             srand(random_key.hash)
-            # Hämta alla ledare från databasen
             leaders = db.execute('SELECT * FROM leaders')
-            # Slumpa ordningen på ledarna
             shuffled_leaders = leaders.shuffle
             index = session[:question_index]
             leaders = shuffled_leaders
@@ -135,26 +132,21 @@ class App < Sinatra::Base
         redirect "/placeholder"
     end
 
-    # Define a POST route to check the name in the database
     post '/check_name' do
         name = params["leader_name"]
-    
-        # Query the database to check if the name exists
+        remaining_time = params["play_time"]
+        session[:time] = remaining_time.to_i
         leader = db.execute("SELECT * FROM leaders WHERE name = ?", name).first
         session[:question_index] += 1
         if leader.nil?
-            # If name is not found, redirect to a failure or error page
-            @error_message = "Leader not found!"
-            redirect "/placeholder/game"  # Or you can render an error page
+          @error_message = "Leader not found!"
+          redirect "/placeholder/game"
         else
-            # If name is found, trigger the appropriate function
-            # For example, set session or update database, etc.
-            # You can redirect or render based on your needs
-            @leader_found = leader
-            session[:score] += 1
-            redirect "/placeholder/game"  # Redirect to the game with the leader found
+          session[:score] += 1
+          redirect "/placeholder/game"
         end
-    end
+      end
+      
   
 
     get '/login' do
@@ -173,14 +165,15 @@ class App < Sinatra::Base
         username = params['user']
         cleartext_password = params['password'] 
         current_user = db.execute('SELECT * FROM users WHERE user = ?', username).first
-        if current_user.empty?
-            @error_message = "please insert username"
-            return erb(:"/login")
-        end
         if current_user == nil
             @error_message = "Wrong Username"
             return erb(:"/login")
         end
+        if current_user.empty?
+            @error_message = "please insert username"
+            return erb(:"/login")
+        end
+       
 
         password_from_db = BCrypt::Password.new(current_user['password'])
         if current_user.empty?
